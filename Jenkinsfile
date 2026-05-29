@@ -12,27 +12,27 @@ pipeline {
             steps {
                 echo 'Validating required project files...'
 
-                bat '''
-                if exist welcome.html (
-                    echo welcome.html file found
-                ) else (
-                    echo welcome.html file missing
-                    exit /b 1
-                )
+                sh '''
+                if [ -f welcome.html ]; then
+                    echo "welcome.html file found"
+                else
+                    echo "welcome.html file missing"
+                    exit 1
+                fi
 
-                if exist design.css (
-                    echo design.css file found
-                ) else (
-                    echo design.css file missing
-                    exit /b 1
-                )
+                if [ -f design.css ]; then
+                    echo "design.css file found"
+                else
+                    echo "design.css file missing"
+                    exit 1
+                fi
 
-                if exist message.js (
-                    echo message.js file found
-                ) else (
-                    echo message.js file missing
-                    exit /b 1
-                )
+                if [ -f message.js ]; then
+                    echo "message.js file found"
+                else
+                    echo "message.js file missing"
+                    exit 1
+                fi
                 '''
             }
         }
@@ -40,7 +40,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Starting build process for Jenkins First Project...'
-                bat 'dir'
+                sh 'ls -la'
                 echo 'Build completed successfully.'
             }
         }
@@ -49,22 +49,22 @@ pipeline {
             steps {
                 echo 'Running automated validation tests...'
 
-                bat '''
-                findstr /i "<html" welcome.html
-                if %errorlevel% neq 0 (
-                    echo HTML validation failed
-                    exit /b 1
-                ) else (
-                    echo HTML validation passed
-                )
+                sh '''
+                grep -i "<html" welcome.html
+                if [ $? -ne 0 ]; then
+                    echo "HTML validation failed"
+                    exit 1
+                else
+                    echo "HTML validation passed"
+                fi
 
-                findstr /i "Jenkins First Project" welcome.html
-                if %errorlevel% neq 0 (
-                    echo Project title validation failed
-                    exit /b 1
-                ) else (
-                    echo Project title validation passed
-                )
+                grep -i "Jenkins First Project" welcome.html
+                if [ $? -ne 0 ]; then
+                    echo "Project title validation failed"
+                    exit 1
+                else
+                    echo "Project title validation passed"
+                fi
                 '''
             }
         }
